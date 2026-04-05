@@ -56,9 +56,8 @@ export function Navbar() {
           {[
             ["/", "Home"],
             ["/medicines", "Medicines"],
-            ["/orders", "My Orders"],
           ]
-            .concat(user ? [["/profile", "Profile"]] : [])
+            .concat(user ? [["/orders", "My Orders"], ["/profile", "Profile"]] : [])
             .map(([to, label]) => (
             <NavLink
               key={to}

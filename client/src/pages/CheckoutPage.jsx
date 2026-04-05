@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { placeOrder } from "@/features/order/orderSlice";
+import { fetchUserOrders, placeOrder } from "@/features/order/orderSlice";
 import { fetchCart } from "@/features/cart/cartSlice";
 import { addAddress, fetchAddresses } from "@/features/auth/authSlice";
 import { api } from "@/services/api";
@@ -91,6 +91,7 @@ export default function CheckoutPage() {
     }
 
     await dispatch(placeOrder(formData)).unwrap();
+    await dispatch(fetchUserOrders()).unwrap();
     toast.success("Order placed successfully");
     dispatch(fetchCart());
     navigate("/orders");

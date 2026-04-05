@@ -1,13 +1,5 @@
 import mongoose from "mongoose";
 
-const imageSchema = new mongoose.Schema(
-  {
-    url: { type: String, required: true },
-    public_id: { type: String, default: "" },
-  },
-  { _id: false }
-);
-
 const orderItemSchema = new mongoose.Schema(
   {
     medicineId: {
@@ -16,7 +8,7 @@ const orderItemSchema = new mongoose.Schema(
       required: true,
     },
     name: { type: String, required: true },
-    image: { type: imageSchema, required: true },
+    image: { type: mongoose.Schema.Types.Mixed, required: true },
     quantity: { type: Number, required: true, min: 1 },
     unitPrice: { type: Number, required: true, min: 0 },
     prescriptionRequired: { type: Boolean, default: false },

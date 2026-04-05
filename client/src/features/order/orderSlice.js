@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api } from "@/services/api";
+import { logout } from "@/features/auth/authSlice";
 
 export const placeOrder = createAsyncThunk("order/place", async (formData) => {
   const { data } = await api.post("/order/place", formData);
@@ -42,6 +43,11 @@ const orderSlice = createSlice({
       .addCase(uploadOrderPrescription.fulfilled, (state, action) => {
         state.loading = false;
         state.orders = state.orders.map((order) => (order._id === action.payload._id ? action.payload : order));
+      })
+      .addCase(logout, (state) => {
+        state.orders = [];
+        state.loading = false;
+        state.lastPlacedOrder = null;
       })
       .addMatcher(
         (action) =>

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api } from "@/services/api";
+import { logout } from "@/features/auth/authSlice";
 
 export const fetchCart = createAsyncThunk("cart/fetch", async () => {
   const { data } = await api.get("/cart/get");
@@ -30,6 +31,10 @@ const cartSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(logout, (state) => {
+        state.items = [];
+        state.loading = false;
+      })
       .addMatcher(
         (action) => ["cart/fetch/pending", "cart/add/pending", "cart/remove/pending", "cart/update/pending"].includes(action.type),
         (state) => {
