@@ -8,6 +8,8 @@ import authRoutes from "./routes/authRoutes.js";
 import medicineRoutes from "./routes/medicineRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import addressRoutes from "./routes/addressRoutes.js";
+import couponRoutes from "./routes/couponRoutes.js";
 import footerRoutes from "./routes/footerRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
@@ -57,6 +59,8 @@ export const createApp = () => {
   app.use("/api/medicine", medicineRoutes);
   app.use("/api/cart", cartRoutes);
   app.use("/api/order", orderRoutes);
+  app.use("/api/address", addressRoutes);
+  app.use("/api/coupon", couponRoutes);
   app.use("/api/footer", footerRoutes);
   app.use("/api/admin", adminRoutes);
 

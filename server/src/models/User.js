@@ -3,14 +3,12 @@ import bcrypt from "bcryptjs";
 
 const addressSchema = new mongoose.Schema(
   {
-    label: { type: String, trim: true, default: "Home" },
     fullName: { type: String, required: true, trim: true },
     phone: { type: String, required: true, trim: true },
-    line1: { type: String, required: true, trim: true },
-    line2: { type: String, trim: true, default: "" },
+    pincode: { type: String, required: true, trim: true },
     city: { type: String, required: true, trim: true },
     state: { type: String, required: true, trim: true },
-    postalCode: { type: String, required: true, trim: true },
+    fullAddress: { type: String, required: true, trim: true },
     isDefault: { type: Boolean, default: false },
   },
   { _id: true }

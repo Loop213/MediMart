@@ -1,6 +1,29 @@
 import asyncHandler from "express-async-handler";
 import { Medicine } from "../models/Medicine.js";
 import { slugify } from "../utils/slugify.js";
+import { cloudinary, hasCloudinaryConfig } from "../config/cloudinary.js";
+
+const toImageObject = (req, fallback) => {
+  if (req.file?.path) {
+    return { url: req.file.path, public_id: req.file.filename || req.file.public_id || "" };
+  }
+  if (req.file?.filename) {
+    return { url: `/uploads/${req.file.filename}`, public_id: "" };
+  }
+  if (typeof fallback === "string" && fallback) {
+    return { url: fallback, public_id: "" };
+  }
+  if (fallback?.url) {
+    return fallback;
+  }
+  return null;
+};
+
+const destroyImage = async (image) => {
+  if (hasCloudinaryConfig && image?.public_id) {
+    await cloudinary.uploader.destroy(image.public_id);
+  }
+};
 
 const normalizeCategory = (category) => {
   const map = {
@@ -111,7 +134,7 @@ export const addMedicine = asyncHandler(async (req, res) => {
     slug: slugify(req.body.name),
     prescriptionRequired: req.body.prescriptionRequired === "true" || req.body.prescriptionRequired === true,
     featured: req.body.featured === "true" || req.body.featured === true,
-    image: req.file ? `/uploads/${req.file.filename}` : req.body.image,
+    image: toImageObject(req, req.body.image),
   };
 
   const medicine = await Medicine.create(payload);
@@ -125,6 +148,8 @@ export const updateMedicine = asyncHandler(async (req, res) => {
     throw new Error("Medicine not found");
   }
 
+  const previousImage = medicine.image;
+
   Object.assign(medicine, {
     ...req.body,
     slug: req.body.name ? slugify(req.body.name) : medicine.slug,
@@ -136,8 +161,12 @@ export const updateMedicine = asyncHandler(async (req, res) => {
       req.body.featured !== undefined
         ? req.body.featured === "true" || req.body.featured === true
         : medicine.featured,
-    image: req.file ? `/uploads/${req.file.filename}` : req.body.image || medicine.image,
+    image: toImageObject(req, req.body.image || medicine.image),
   });
+
+  if (req.file && previousImage?.public_id && previousImage.public_id !== medicine.image?.public_id) {
+    await destroyImage(previousImage);
+  }
 
   await medicine.save();
   res.json(medicine);
@@ -150,6 +179,7 @@ export const deleteMedicine = asyncHandler(async (req, res) => {
     throw new Error("Medicine not found");
   }
 
+  await destroyImage(medicine.image);
   await medicine.deleteOne();
   res.json({ message: "Medicine deleted" });
 });

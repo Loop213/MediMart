@@ -3,6 +3,7 @@ import { connectDB } from "../config/db.js";
 import { User } from "../models/User.js";
 import { Medicine } from "../models/Medicine.js";
 import { Footer } from "../models/Footer.js";
+import { Coupon } from "../models/Coupon.js";
 import { slugify } from "../utils/slugify.js";
 import { footerDefaults } from "../utils/footerDefaults.js";
 
@@ -100,10 +101,32 @@ const seed = async () => {
     medicines.map((medicine) => ({
       ...medicine,
       slug: slugify(medicine.name),
+      image: { url: medicine.image, public_id: "" },
     }))
   );
 
   await Footer.create(footerDefaults);
+  await Coupon.deleteMany();
+  await Coupon.insertMany([
+    {
+      code: "MEDI10",
+      discountType: "percentage",
+      discountValue: 10,
+      minOrderAmount: 200,
+      expiryDate: new Date("2027-01-01"),
+      usageLimit: 100,
+      usedBy: [],
+    },
+    {
+      code: "SAVE75",
+      discountType: "fixed",
+      discountValue: 75,
+      minOrderAmount: 500,
+      expiryDate: new Date("2027-01-01"),
+      usageLimit: 100,
+      usedBy: [],
+    },
+  ]);
 
   const adminEmail = process.env.ADMIN_EMAIL || "admin@medimart.com";
   const adminPassword = process.env.ADMIN_PASSWORD || "Admin@123";

@@ -1,5 +1,13 @@
 import mongoose from "mongoose";
 
+const imageSchema = new mongoose.Schema(
+  {
+    url: { type: String, required: true, trim: true },
+    public_id: { type: String, default: "" },
+  },
+  { _id: false }
+);
+
 const medicineSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true, index: true },
@@ -11,7 +19,7 @@ const medicineSchema = new mongoose.Schema(
       required: true,
       enum: ["Tablets", "Syrups", "Capsules", "Personal Care", "Health Devices"],
     },
-    image: { type: String, required: true, trim: true },
+    image: { type: imageSchema, required: true },
     description: { type: String, required: true, trim: true },
     prescriptionRequired: { type: Boolean, default: false },
     stock: { type: Number, required: true, min: 0 },

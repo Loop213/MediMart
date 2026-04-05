@@ -22,6 +22,7 @@ const AdminMedicinesPage = lazy(() => import("./pages/admin/AdminMedicinesPage")
 const AdminOrdersPage = lazy(() => import("./pages/admin/AdminOrdersPage"));
 const AdminFooterPage = lazy(() => import("./pages/admin/AdminFooterPage"));
 const AdminCustomersPage = lazy(() => import("./pages/admin/AdminCustomersPage"));
+const AdminCouponsPage = lazy(() => import("./pages/admin/AdminCouponsPage"));
 
 function App() {
   const dispatch = useDispatch();
@@ -105,6 +106,14 @@ function App() {
             element={
               <AdminRoute>
                 <AdminFooterPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/coupons"
+            element={
+              <AdminRoute>
+                <AdminCouponsPage />
               </AdminRoute>
             }
           />

@@ -9,7 +9,8 @@ export const currency = (value) =>
     maximumFractionDigits: 0,
   }).format(value || 0);
 
-export const apiAsset = (url) => {
+export const apiAsset = (image) => {
+  const url = typeof image === "string" ? image : image?.url;
   if (!url) return "";
   if (url.startsWith("http")) return url;
   const baseUrl = import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:5000";

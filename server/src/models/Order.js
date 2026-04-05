@@ -1,5 +1,13 @@
 import mongoose from "mongoose";
 
+const imageSchema = new mongoose.Schema(
+  {
+    url: { type: String, required: true },
+    public_id: { type: String, default: "" },
+  },
+  { _id: false }
+);
+
 const orderItemSchema = new mongoose.Schema(
   {
     medicineId: {
@@ -8,7 +16,7 @@ const orderItemSchema = new mongoose.Schema(
       required: true,
     },
     name: { type: String, required: true },
-    image: { type: String, required: true },
+    image: { type: imageSchema, required: true },
     quantity: { type: Number, required: true, min: 1 },
     unitPrice: { type: Number, required: true, min: 0 },
     prescriptionRequired: { type: Boolean, default: false },
@@ -20,11 +28,10 @@ const addressSnapshotSchema = new mongoose.Schema(
   {
     fullName: { type: String, required: true },
     phone: { type: String, required: true },
-    line1: { type: String, required: true },
-    line2: { type: String, default: "" },
+    pincode: { type: String, required: true },
     city: { type: String, required: true },
     state: { type: String, required: true },
-    postalCode: { type: String, required: true },
+    fullAddress: { type: String, required: true },
   },
   { _id: false }
 );
@@ -34,7 +41,14 @@ const orderSchema = new mongoose.Schema(
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     items: [orderItemSchema],
     amount: { type: Number, required: true, min: 0 },
+    discountAmount: { type: Number, default: 0, min: 0 },
+    finalPrice: { type: Number, required: true, min: 0 },
     address: { type: addressSnapshotSchema, required: true },
+    coupon: {
+      code: { type: String, default: "" },
+      discountType: { type: String, default: "" },
+      discountValue: { type: Number, default: 0 },
+    },
     prescriptionImage: { type: String, default: "" },
     prescriptionStatus: {
       type: String,

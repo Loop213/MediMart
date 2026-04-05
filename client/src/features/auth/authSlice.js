@@ -42,13 +42,23 @@ export const changePassword = createAsyncThunk("auth/changePassword", async (val
   return data.message;
 });
 
+export const fetchAddresses = createAsyncThunk("auth/fetchAddresses", async () => {
+  const { data } = await api.get("/address");
+  return data;
+});
+
 export const addAddress = createAsyncThunk("auth/addAddress", async (values) => {
-  const { data } = await api.post("/auth/address", values);
+  const { data } = await api.post("/address/add", values);
+  return data;
+});
+
+export const updateAddress = createAsyncThunk("auth/updateAddress", async ({ id, values }) => {
+  const { data } = await api.put(`/address/update/${id}`, values);
   return data;
 });
 
 export const deleteAddress = createAsyncThunk("auth/deleteAddress", async (id) => {
-  const { data } = await api.delete(`/auth/address/${id}`);
+  const { data } = await api.delete(`/address/delete/${id}`);
   return data;
 });
 
@@ -78,7 +88,17 @@ const authSlice = createSlice({
         state.user = action.payload;
         state.loading = false;
       })
+      .addCase(fetchAddresses.fulfilled, (state, action) => {
+        if (state.user) {
+          state.user.addresses = action.payload;
+        }
+      })
       .addCase(addAddress.fulfilled, (state, action) => {
+        if (state.user) {
+          state.user.addresses = action.payload;
+        }
+      })
+      .addCase(updateAddress.fulfilled, (state, action) => {
         if (state.user) {
           state.user.addresses = action.payload;
         }

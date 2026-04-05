@@ -8,21 +8,23 @@ import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { apiAsset, currency } from "@/lib/utils";
 
+const initialForm = {
+  name: "",
+  price: "",
+  originalPrice: "",
+  category: "Tablets",
+  description: "",
+  stock: "",
+  image: "",
+  prescriptionRequired: "false",
+  featured: "false",
+};
+
 export default function AdminMedicinesPage() {
   const dispatch = useDispatch();
   const medicines = useSelector((state) => state.medicine.items);
   const [editingId, setEditingId] = useState(null);
-  const [form, setForm] = useState({
-    name: "",
-    price: "",
-    originalPrice: "",
-    category: "Tablets",
-    description: "",
-    stock: "",
-    image: "",
-    prescriptionRequired: "false",
-    featured: "false",
-  });
+  const [form, setForm] = useState(initialForm);
   const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
@@ -39,17 +41,7 @@ export default function AdminMedicinesPage() {
     } else {
       await dispatch(addMedicine(formData)).unwrap();
     }
-    setForm({
-      name: "",
-      price: "",
-      originalPrice: "",
-      category: "Tablets",
-      description: "",
-      stock: "",
-      image: "",
-      prescriptionRequired: "false",
-      featured: "false",
-    });
+    setForm(initialForm);
     setImageFile(null);
     setEditingId(null);
   };
@@ -96,17 +88,7 @@ export default function AdminMedicinesPage() {
               onClick={() => {
                 setEditingId(null);
                 setImageFile(null);
-                setForm({
-                  name: "",
-                  price: "",
-                  originalPrice: "",
-                  category: "Tablets",
-                  description: "",
-                  stock: "",
-                  image: "",
-                  prescriptionRequired: "false",
-                  featured: "false",
-                });
+                setForm(initialForm);
               }}
             >
               Cancel edit
@@ -144,7 +126,7 @@ export default function AdminMedicinesPage() {
                         category: medicine.category,
                         description: medicine.description,
                         stock: medicine.stock,
-                        image: medicine.image.startsWith("http") ? medicine.image : "",
+                        image: medicine.image?.url || "",
                         prescriptionRequired: String(medicine.prescriptionRequired),
                         featured: String(medicine.featured),
                       });

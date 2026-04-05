@@ -2,6 +2,8 @@ import asyncHandler from "express-async-handler";
 import { Order } from "../models/Order.js";
 import { User } from "../models/User.js";
 import { Medicine } from "../models/Medicine.js";
+import { Coupon } from "../models/Coupon.js";
+import { validateCouponForUser } from "./couponController.js";
 
 const requiresPrescription = (items) => items.some((item) => item.prescriptionRequired);
 
@@ -13,18 +15,15 @@ export const placeOrder = asyncHandler(async (req, res) => {
     throw new Error("Cart is empty");
   }
 
-  const { address, paymentMethod, transactionId } = req.body;
-  if (!address || !paymentMethod) {
+  const { addressId, paymentMethod, transactionId, couponCode } = req.body;
+  if (!addressId || !paymentMethod) {
     res.status(400);
     throw new Error("Address and payment method are required");
   }
-
-  let parsedAddress;
-  try {
-    parsedAddress = typeof address === "string" ? JSON.parse(address) : address;
-  } catch {
-    res.status(400);
-    throw new Error("Invalid address data");
+  const selectedAddress = user.addresses.id(addressId);
+  if (!selectedAddress) {
+    res.status(404);
+    throw new Error("Selected address not found");
   }
 
   const items = user.cartData.map((item) => ({
@@ -61,11 +60,39 @@ export const placeOrder = asyncHandler(async (req, res) => {
   }
 
   const amount = items.reduce((total, item) => total + item.quantity * item.unitPrice, 0);
+  let discountAmount = 0;
+  let finalPrice = amount;
+  let couponSnapshot = { code: "", discountType: "", discountValue: 0 };
+
+  if (couponCode) {
+    const coupon = await Coupon.findOne({ code: String(couponCode).trim().toUpperCase() });
+    const couponResult = validateCouponForUser(coupon, req.user._id, amount);
+    discountAmount = couponResult.discountAmount;
+    finalPrice = couponResult.finalPrice;
+    couponSnapshot = {
+      code: couponResult.code,
+      discountType: couponResult.discountType,
+      discountValue: couponResult.discountValue,
+    };
+    coupon.usedBy.push(req.user._id);
+    await coupon.save();
+  }
+
   const order = await Order.create({
     userId: req.user._id,
     items,
     amount,
-    address: parsedAddress,
+    discountAmount,
+    finalPrice,
+    coupon: couponSnapshot,
+    address: {
+      fullName: selectedAddress.fullName,
+      phone: selectedAddress.phone,
+      pincode: selectedAddress.pincode,
+      city: selectedAddress.city,
+      state: selectedAddress.state,
+      fullAddress: selectedAddress.fullAddress,
+    },
     prescriptionImage,
     prescriptionStatus: prescriptionNeeded ? "Pending" : "Not Required",
     paymentMethod,
@@ -157,7 +184,7 @@ export const getAdminStats = asyncHandler(async (req, res) => {
 
   const revenue = orders
     .filter((order) => order.paymentStatus === "Verified" || order.paymentMethod === "COD")
-    .reduce((sum, order) => sum + order.amount, 0);
+    .reduce((sum, order) => sum + (order.finalPrice || order.amount), 0);
 
   res.json({
     totalUsers: usersCount,

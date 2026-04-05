@@ -1,4 +1,4 @@
-import { BarChart3, PackageCheck, Pill, Settings2, Users } from "lucide-react";
+import { BarChart3, BadgePercent, PackageCheck, Pill, Settings2, Users } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const links = [
@@ -6,6 +6,7 @@ const links = [
   { to: "/admin/orders", label: "Orders", icon: PackageCheck },
   { to: "/admin/customers", label: "Customers", icon: Users },
   { to: "/admin/medicines", label: "Products", icon: Pill },
+  { to: "/admin/coupons", label: "Coupons", icon: BadgePercent },
   { to: "/admin/footer", label: "Settings", icon: Settings2 },
 ];
 

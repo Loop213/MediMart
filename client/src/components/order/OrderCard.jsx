@@ -48,7 +48,20 @@ export function OrderCard({ order }) {
         ))}
       </div>
       <div className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-slate-800">
+        <div className="space-y-1 text-sm">
+          <p className="font-semibold">
+            Deliver to: {order.address.fullName}, {order.address.fullAddress}, {order.address.city}, {order.address.state} -{" "}
+            {order.address.pincode}
+          </p>
+          <p className="text-slate-500 dark:text-slate-400">Contact: {order.address.phone}</p>
+        </div>
         <p className="font-bold">Total: {currency(order.amount)}</p>
+        {order.discountAmount > 0 ? (
+          <p className="font-semibold text-emerald-600 dark:text-emerald-300">
+            Discount: -{currency(order.discountAmount)} {order.coupon?.code ? `(${order.coupon.code})` : ""}
+          </p>
+        ) : null}
+        <p className="font-bold text-lg">Final price: {currency(order.finalPrice || order.amount)}</p>
         {order.prescriptionStatus !== "Approved" && !order.prescriptionImage && (
           <div className="flex flex-col gap-3 sm:flex-row">
             <Input type="file" accept="image/*" onChange={(event) => setFile(event.target.files?.[0] || null)} />

@@ -1,9 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { addAddress, changePassword, deleteAddress, updateProfile } from "@/features/auth/authSlice";
+import {
+  addAddress,
+  changePassword,
+  deleteAddress,
+  fetchAddresses,
+  updateAddress,
+  updateProfile,
+} from "@/features/auth/authSlice";
+
+const blankAddress = {
+  fullName: "",
+  phone: "",
+  pincode: "",
+  city: "",
+  state: "",
+  fullAddress: "",
+  isDefault: true,
+};
 
 export default function ProfilePage() {
   const dispatch = useDispatch();
@@ -13,21 +31,33 @@ export default function ProfilePage() {
     email: user?.email || "",
     phone: user?.phone || "",
   });
-  const [password, setPassword] = useState({
-    currentPassword: "",
-    newPassword: "",
-  });
-  const [address, setAddress] = useState({
-    label: "Home",
-    fullName: user?.name || "",
-    phone: user?.phone || "",
-    line1: "",
-    line2: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    isDefault: true,
-  });
+  const [password, setPassword] = useState({ currentPassword: "", newPassword: "" });
+  const [address, setAddress] = useState(blankAddress);
+  const [editingAddressId, setEditingAddressId] = useState(null);
+
+  useEffect(() => {
+    dispatch(fetchAddresses());
+  }, [dispatch]);
+
+  useEffect(() => {
+    setProfile({
+      name: user?.name || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+    });
+  }, [user]);
+
+  const handleAddressSubmit = async () => {
+    if (editingAddressId) {
+      await dispatch(updateAddress({ id: editingAddressId, values: address })).unwrap();
+      toast.success("Address updated");
+    } else {
+      await dispatch(addAddress(address)).unwrap();
+      toast.success("Address added");
+    }
+    setAddress(blankAddress);
+    setEditingAddressId(null);
+  };
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
@@ -64,19 +94,45 @@ export default function ProfilePage() {
       </Card>
 
       <Card className="space-y-4">
-        <h2 className="text-2xl font-black">Add address</h2>
+        <h2 className="text-2xl font-black">{editingAddressId ? "Edit address" : "Add address"}</h2>
         <div className="grid gap-3 md:grid-cols-2">
-          {["label", "fullName", "phone", "line1", "line2", "city", "state", "postalCode"].map((key) => (
+          {["fullName", "phone", "pincode", "city", "state"].map((key) => (
             <Input
               key={key}
-              className={key === "line1" || key === "line2" ? "md:col-span-2" : ""}
               placeholder={key}
               value={address[key]}
               onChange={(event) => setAddress((current) => ({ ...current, [key]: event.target.value }))}
             />
           ))}
+          <Input
+            className="md:col-span-2"
+            placeholder="Full Address"
+            value={address.fullAddress}
+            onChange={(event) => setAddress((current) => ({ ...current, fullAddress: event.target.value }))}
+          />
         </div>
-        <Button onClick={() => dispatch(addAddress(address))}>Add address</Button>
+        <label className="flex items-center gap-2 text-sm font-semibold">
+          <input
+            type="checkbox"
+            checked={address.isDefault}
+            onChange={(event) => setAddress((current) => ({ ...current, isDefault: event.target.checked }))}
+          />
+          Set as default
+        </label>
+        <div className="flex gap-3">
+          <Button onClick={handleAddressSubmit}>{editingAddressId ? "Update address" : "Add address"}</Button>
+          {editingAddressId ? (
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setEditingAddressId(null);
+                setAddress(blankAddress);
+              }}
+            >
+              Cancel
+            </Button>
+          ) : null}
+        </div>
       </Card>
 
       <Card className="space-y-4">
@@ -86,14 +142,34 @@ export default function ProfilePage() {
             user.addresses.map((item) => (
               <div key={item._id} className="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
                 <p className="font-bold">
-                  {item.label} {item.isDefault ? "· Default" : ""}
+                  {item.fullName} {item.isDefault ? "· Default" : ""}
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  {item.fullName}, {item.line1}, {item.city}, {item.state} {item.postalCode}
+                  {item.fullAddress}, {item.city}, {item.state} - {item.pincode}
                 </p>
-                <Button variant="ghost" className="mt-2 text-rose-600" onClick={() => dispatch(deleteAddress(item._id))}>
-                  Remove
-                </Button>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{item.phone}</p>
+                <div className="mt-3 flex gap-2">
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setEditingAddressId(item._id);
+                      setAddress({
+                        fullName: item.fullName,
+                        phone: item.phone,
+                        pincode: item.pincode,
+                        city: item.city,
+                        state: item.state,
+                        fullAddress: item.fullAddress,
+                        isDefault: item.isDefault,
+                      });
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button variant="ghost" className="text-rose-600" onClick={() => dispatch(deleteAddress(item._id))}>
+                    Delete
+                  </Button>
+                </div>
               </div>
             ))
           ) : (
