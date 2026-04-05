@@ -2,9 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api } from "@/services/api";
 
 export const placeOrder = createAsyncThunk("order/place", async (formData) => {
-  const { data } = await api.post("/order/place", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const { data } = await api.post("/order/place", formData);
   return data;
 });
 
@@ -14,9 +12,7 @@ export const fetchUserOrders = createAsyncThunk("order/userOrders", async () => 
 });
 
 export const uploadOrderPrescription = createAsyncThunk("order/uploadPrescription", async ({ id, formData }) => {
-  const { data } = await api.post(`/order/upload-prescription/${id}`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const { data } = await api.post(`/order/upload-prescription/${id}`, formData);
   return data;
 });
 

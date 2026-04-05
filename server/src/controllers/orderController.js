@@ -14,6 +14,19 @@ export const placeOrder = asyncHandler(async (req, res) => {
   }
 
   const { address, paymentMethod, transactionId } = req.body;
+  if (!address || !paymentMethod) {
+    res.status(400);
+    throw new Error("Address and payment method are required");
+  }
+
+  let parsedAddress;
+  try {
+    parsedAddress = typeof address === "string" ? JSON.parse(address) : address;
+  } catch {
+    res.status(400);
+    throw new Error("Invalid address data");
+  }
+
   const items = user.cartData.map((item) => ({
     medicineId: item.medicineId._id,
     name: item.medicineId.name,
@@ -52,7 +65,7 @@ export const placeOrder = asyncHandler(async (req, res) => {
     userId: req.user._id,
     items,
     amount,
-    address: JSON.parse(address),
+    address: parsedAddress,
     prescriptionImage,
     prescriptionStatus: prescriptionNeeded ? "Pending" : "Not Required",
     paymentMethod,

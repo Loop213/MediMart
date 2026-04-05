@@ -12,16 +12,12 @@ export const searchMedicines = createAsyncThunk("medicine/search", async (params
 });
 
 export const addMedicine = createAsyncThunk("medicine/add", async (formData) => {
-  const { data } = await api.post("/medicine/add", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const { data } = await api.post("/medicine/add", formData);
   return data;
 });
 
 export const updateMedicine = createAsyncThunk("medicine/update", async ({ id, formData }) => {
-  const { data } = await api.put(`/medicine/update/${id}`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const { data } = await api.put(`/medicine/update/${id}`, formData);
   return data;
 });
 
