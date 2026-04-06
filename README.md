@@ -1,51 +1,101 @@
-# MediMart
-<<<<<<< HEAD
-Medimart is a full-stack medicine e-commerce platform that enables users to browse, search, and purchase healthcare products online with a fast, secure, and user-friendly experience.
-=======
+Overview
 
-Production-ready full stack medicine e-commerce application inspired by modern pharmacy platforms such as Tata 1mg and PharmEasy.
+MediMart is a modern full-stack medicine e-commerce platform designed to provide a seamless and fast online pharmacy experience.
+It enables users to browse medicines, place orders, manage profiles, and allows admins to manage inventory and customers efficiently.
 
-## Stack
+This project focuses on performance, responsiveness, and user-friendly UI/UX.
 
-- Frontend: React + Vite + Tailwind CSS + Redux Toolkit + React Router
-- Backend: Node.js + Express + MongoDB Atlas + Mongoose
-- Auth: JWT + role-based access
-- Payments: Cash on Delivery and manual UPI verification
-
-## Features
-
-- Search and filter medicines
-- Cart persisted to database
-- Prescription upload support
-- COD and UPI checkout flows
-- Order tracking and profile management
-- Admin dashboard for medicines, orders, users, prescriptions, and payment verification
-- Dark mode and light mode with local preference persistence
-
-## Run locally
-
-1. Copy `client/.env.example` to `client/.env`
-2. Copy `server/.env.example` to `server/.env`
-3. Install dependencies:
-
-```bash
+🚀 Features
+👤 Customer Features
+🔍 Search medicines with filters
+🛒 Add to cart & checkout
+📦 Order tracking system
+🎟️ Apply coupon codes
+📍 Save multiple delivery addresses
+💳 Payment options (COD & UPI)
+🧑‍💼 Admin Features
+📊 Dashboard overview
+📦 Manage orders (view/delete)
+👥 Manage customers
+💊 Add / Update / Delete medicines
+🎟️ Manage coupons & offers
+🌗 UI/UX Features
+🌙 Light & Dark mode
+⚡ Fast and responsive design
+📱 Mobile-friendly interface
+🛠️ Tech Stack
+Frontend
+HTML, CSS, JavaScript
+EJS (Embedded JavaScript Templates)
+Backend
+Node.js
+Express.js
+Database
+MongoDB (Atlas)
+Cloud Services
+Cloudinary (for image storage)
+📂 Project Structure
+MediMart/
+│── models/
+│── routes/
+│── controllers/
+│── views/
+│── public/
+│── utils/
+│── app.js
+│── package.json
+⚙️ Installation & Setup
+1️⃣ Clone the repository
+git clone https://github.com/Loop213/MediMart.git
+cd MediMart
+2️⃣ Install dependencies
 npm install
-```
+3️⃣ Setup Environment Variables
 
-4. Start both apps:
+Create a .env file and add:
 
-```bash
-npm run dev
-```
+PORT=3000
+MONGO_URI=your_mongodb_connection
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_KEY=your_key
+CLOUDINARY_SECRET=your_secret
+4️⃣ Run the project
+npm start
+🔐 Authentication
+Secure login/signup system
+Session-based authentication
+Role-based access (Admin / Customer)
+💳 Payment Integration
+Cash on Delivery (COD)
+UPI Payments (e.g. 9973545985123@ybl)
+📸 Screenshots
 
-## Seed admin and sample medicines
+Add your project screenshots here
 
-```bash
-npm run seed
-```
+📌 Future Enhancements
+✅ Online payment gateway (Razorpay/Stripe)
+✅ Prescription upload feature
+✅ Real-time order tracking
+✅ AI-based medicine recommendation
+✅ Notification system (Email/SMS)
+🤝 Contributing
 
-## Default admin credentials
+Contributions are welcome!
 
-- Email: value from `ADMIN_EMAIL`
-- Password: value from `ADMIN_PASSWORD`
->>>>>>> d6b095c (Initial commit)
+Fork → Create Branch → Commit → Push → Pull Request
+🧑‍💻 Author
+
+Vivek Singh
+GitHub: https://github.com/Loop213
+
+📜 License
+
+This project is licensed under the MIT License.
+
+⭐ Support
+
+If you like this project, please ⭐ star the repository!
+
+💡 Tagline
+
+"Your Trusted Online Pharmacy – Fast, Reliable, MediMart."
