@@ -5,7 +5,7 @@
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
-
+VISIT THIS URL TO OPEN : https://medi-mart-client-orpin.vercel.app/
 ## 🩺 Overview
 
 **MediMart** is a modern full-stack **medicine e-commerce platform** that provides a fast, secure, and user-friendly online pharmacy experience.
